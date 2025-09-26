@@ -1,191 +1,226 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
+    <!DOCTYPE html>
+    <html lang="es">
+    <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistema de Elecciones</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-    <title>Sistema de Elecciones</title>
     <style>
-        .candidato-img {
-            cursor: pointer;
-            transition: transform 0.3s, box-shadow 0.3s;
-            height: 200px;
-            object-fit: cover;
+        body {
+        background: linear-gradient(135deg, #e8f0ff, #ffffff);
+        font-family: "Segoe UI", Tahoma, sans-serif;
         }
-        .candidato-img:hover {
-            transform: scale(1.05);
-            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+
+        header {
+        background: #212529;
+        color: #fff;
+        padding: 1rem 2rem;
+        border-radius: 0 0 15px 15px;
+        margin-bottom: 2rem;
         }
-        .card {
-            transition: all 0.3s;
+
+        header h1 {
+        font-size: 1.8rem;
+        font-weight: 700;
+        margin: 0;
         }
-        .card:hover {
-            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+
+        .status-box {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        justify-content: flex-end;
+        }
+
+        .status-box input {
+        max-width: 80px;
+        text-align: center;
+        font-weight: bold;
+        }
+
+        .candidate-card {
+        border: none;
+        border-radius: 20px;
+        background: #fff;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+        overflow: hidden;
+        transition: transform 0.25s;
+        }
+
+        .candidate-card:hover {
+        transform: translateY(-5px);
+        }
+
+        .candidate-header {
+        background: #0d6efd;
+        color: #fff;
+        padding: 0.8rem;
+        text-align: center;
+        font-weight: bold;
+        font-size: 1rem;
+        }
+
+        .candidate-body img {
+        height: 180px;
+        width: 100%;
+        object-fit: cover;
+        cursor: pointer;
+        border-bottom: 2px solid #eee;
+        transition: transform 0.3s ease;
+        }
+
+        .candidate-body img:hover {
+        transform: scale(1.05);
+        }
+
+        .candidate-body {
+        text-align: center;
+        padding: 1rem;
+        }
+
+        .candidate-footer {
+        background: #f8f9fa;
+        padding: 0.8rem;
+        text-align: center;
+        }
+
+        .candidate-footer button {
+        border-radius: 50px;
+        }
+
+        main h2 {
+        font-weight: bold;
+        margin-bottom: 1.5rem;
+        text-align: center;
+        color: #333;
         }
     </style>
-</head>
-<body>
-    <div class="container">
-        <div class="modal fade" id="adminModal" tabindex="-1">
-            <div class="modal-dialog">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h5 class="modal-title" id="modalTitle">Administrar Elecciones</h5>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                        
-                    </div>
-                    <div class="modal-body">
-                        <div id="loginForm">
-                            <div class="mb-3">
-                                <label for="username" class="form-label">Usuario</label>
-                                <input type="text" class="form-control" id="username">
-                            </div>
-                            <div class="mb-3">
-                                <label for="password" class="form-label">Contraseña</label>
-                                <input type="password" class="form-control" id="password">
-                            </div>
-                            <button onclick="validarLogin()" class="btn btn-primary w-100">Entrar</button>
-                        </div>
-                        <div id="adminActions" style="display: none;">
-                            <p id="adminWelcome"></p>
-                            <div class="d-grid gap-2">
-                                <button class="btn btn-success" id="btnIniciarElecciones">Iniciar Elecciones</button>
-                                <button class="btn btn-warning" id="btnCerrarElecciones">Cerrar Elecciones</button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+    </head>
+    <body>
+
+    <div class="modal fade" id="adminModal" tabindex="-1">
+        <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header bg-dark text-white">
+            <h5 class="modal-title">Administrar Elecciones</h5>
+            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+            <div id="loginForm">
+                <label for="username" class="form-label">Usuario</label>
+                <input type="text" class="form-control mb-3" id="username">
+                <label for="password" class="form-label">Contraseña</label>
+                <input type="password" class="form-control mb-3" id="password">
+                <button onclick="validarLogin()" class="btn btn-primary w-100">Entrar</button>
+            </div>
+            <div id="adminActions" style="display: none;">
+                <p id="adminWelcome" class="fw-bold"></p>
+                <button class="btn btn-success w-100 mb-2" id="btnIniciarElecciones">Iniciar Elecciones</button>
+                <button class="btn btn-danger w-100" id="btnCerrarElecciones">Cerrar Elecciones</button>
+            </div>
             </div>
         </div>
-
-        <div class="modal fade" id="resultadosModal" tabindex="-1">
-            <div class="modal-dialog modal-lg">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h5 class="modal-title">Resultados de las Elecciones</h5>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                    </div>
-                    <div class="modal-body">
-                        <div id="resultadosContent"></div>
-                    </div>
-                </div>
-            </div>
         </div>
-
-        <header class="my-4">
-            <div class="row align-items-center">
-                <div class="col-8">
-                    <h3 class="text-center fw-bold text-primary">SISTEMA DE ELECCIONES</h3>
-                    <div class="text-center">
-                        <span id="estadoElecciones" class="badge bg-secondary">Elecciones no iniciadas</span>
-                    </div>
-                </div>
-                <div class="col-4 text-end">
-                    <div class="d-flex align-items-center justify-content-end gap-3">
-                        <span class="fw-bold">Votos realizados:</span>
-                        <input type="text" id="txtContador" class="form-control w-25 text-center" value="0" readonly>
-                        <button class="btn btn-outline-primary" id="btnAdmin">Administrar</button>
-                        <button class="btn btn-outline-info" id="btnVerResultados" style="display: none;">Ver Resultados</button>
-                    </div>
-                </div>
-            </div>
-        </header>
-        <main>
-            <h3 class="text-center fw-bold mb-4">CANDIDATOS A VOCEROS</h3>
-            <div id="mensajeElecciones" class="alert alert-warning text-center" style="display: none;">
-                Las elecciones no han comenzado. Espere a que el administrador inicie el proceso.
-            </div>
-            <div id="candidatos" class="row g-3">
-                <!-- Candidato 1 -->
-                <div class="col-md-4 mb-3">
-                    <div class="card h-100">
-                        <div class="card-header bg-primary text-white text-center">
-                            <h6 class="mb-0" id="nombre-1">Cargando...</h6>
-                        </div>
-                        <div class="card-body text-center">
-                            <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRLKddWgf177QWx9-67XFKlx6JXrdvzlfDyhA&s" 
-                                class="img-fluid rounded candidato-img" 
-                                onclick="votar('1')"
-                                alt="Candidato 1">
-                            <p class="mt-2 mb-1"><strong>Partido:</strong> <span id="partido-1">Cargando...</span></p>
-                            <p class="mb-0"><strong>Votos:</strong> <span id="votos-1">0</span></p>
-                        </div>
-                        <div class="card-footer text-center">
-                            <button onclick="votar('1')" class="btn btn-danger w-100" disabled>
-                                Votar
-                            </button>
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="col-md-4 mb-3">
-                    <div class="card h-100">
-                        <div class="card-header bg-primary text-white text-center">
-                            <h6 class="mb-0" id="nombre-2">Cargando...</h6>
-                        </div>
-                        <div class="card-body text-center">
-                            <img src="https://www.elespectador.com/resizer/v2/PHLPBSJUXJFBNC6CICPQUWVCE4.jpg?auth=800f1f9f4ff443ef769b559e6b5928e6a296b07e1f5978938df90ed7499187d5&width=910&height=606&smart=true&quality=70" 
-                                class="img-fluid rounded candidato-img" 
-                                onclick="votar('2')"
-                                alt="Candidato 2">
-                            <p class="mt-2 mb-1"><strong>Partido:</strong> <span id="partido-2">Cargando...</span></p>
-                            <p class="mb-0"><strong>Votos:</strong> <span id="votos-2">0</span></p>
-                        </div>
-                        <div class="card-footer text-center">
-                            <button onclick="votar('2')" class="btn btn-danger w-100" disabled>
-                                Votar
-                            </button>
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="col-md-4 mb-3">
-                    <div class="card h-100">
-                        <div class="card-header bg-primary text-white text-center">
-                            <h6 class="mb-0" id="nombre-3">Cargando...</h6>
-                        </div>
-                        <div class="card-body text-center">
-                            <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQtggkbdWXeDB0Zmm9_v85IBVwo9mzSydvwUA&s" 
-                                class="img-fluid rounded candidato-img" 
-                                onclick="votar('3')"
-                                alt="Candidato 3">
-                            <p class="mt-2 mb-1"><strong>Partido:</strong> <span id="partido-3">Cargando...</span></p>
-                            <p class="mb-0"><strong>Votos:</strong> <span id="votos-3">0</span></p>
-                        </div>
-                        <div class="card-footer text-center">
-                            <button onclick="votar('3')" class="btn btn-danger w-100" disabled>
-                                Votar
-                            </button>
-                        </div>
-                    </div>
-                </div>
-                
-                
-                <div class="col-md-4 mb-3">
-                    <div class="card h-100">
-                        <div class="card-header bg-primary text-white text-center">
-                            <h6 class="mb-0" id="nombre-blanco">Voto en Blanco</h6>
-                        </div>
-                        <div class="card-body text-center">
-                            <img src="https://static.vecteezy.com/system/resources/previews/005/276/776/non_2x/logo-icon-person-on-white-background-free-vector.jpg" 
-                                class="img-fluid rounded candidato-img" 
-                                onclick="votar('blanco')"
-                                alt="Voto en Blanco">
-                            <p class="mt-2 mb-1"><strong>Partido:</strong> <span id="partido-blanco">Blanco</span></p>
-                            <p class="mb-0"><strong>Votos:</strong> <span id="votos-blanco">0</span></p>
-                        </div>
-                        <div class="card-footer text-center">
-                            <button onclick="votar('blanco')" class="btn btn-danger w-100" disabled>
-                                Votar
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </main>
     </div>
 
+    <div class="modal fade" id="resultadosModal" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header bg-primary text-white">
+            <h5 class="modal-title">Resultados</h5>
+            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+            <div id="resultadosContent"></div>
+            </div>
+        </div>
+        </div>
+    </div>
+
+    <header class="d-flex justify-content-between align-items-center">
+        <h1>Sistema de Elecciones</h1>
+        <div class="status-box">
+        <span class="badge bg-secondary" id="estadoElecciones">No iniciado</span>
+        <span class="fw-bold">Votos:</span>
+        <input type="text" id="txtContador" class="form-control" value="0" readonly>
+        <button class="btn btn-outline-light" id="btnAdmin">⚙️</button>
+        <button class="btn btn-outline-info" id="btnVerResultados" style="display: none;"></button>
+        </div>
+    </header>
+
+   
+    <main class="container">
+        <h2>Candidatos a Voceros</h2>
+        <div id="mensajeElecciones" class="alert alert-warning text-center" style="display: none;">
+        Las elecciones aún no han comenzado. Espere al administrador.
+        </div>
+
+        <div id="candidatos" class="row g-4">
+        <div class="col-md-3">
+            <div class="candidate-card h-100">
+            <div class="candidate-header" id="nombre-1">Cargando...</div>
+            <div class="candidate-body">
+                <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRLKddWgf177QWx9-67XFKlx6JXrdvzlfDyhA&s"
+                    alt="Candidato 1" onclick="votar('1')" class="img-fluid">
+                <p><strong>Partido:</strong> <span id="partido-1">Cargando...</span></p>
+                <p><strong>Votos:</strong> <span id="votos-1">0</span></p>
+            </div>
+            <div class="candidate-footer">
+                <button onclick="votar('1')" class="btn btn-primary w-100" disabled>Votar</button>
+            </div>
+            </div>
+        </div>
+
+        <div class="col-md-3">
+            <div class="candidate-card h-100">
+            <div class="candidate-header" id="nombre-2">Cargando...</div>
+            <div class="candidate-body">
+                <img src="https://www.elespectador.com/resizer/v2/PHLPBSJUXJFBNC6CICPQUWVCE4.jpg?auth=800f1f9f4ff443ef769b559e6b5928e6a296b07e1f5978938df90ed7499187d5&width=910&height=606&smart=true&quality=70"
+                    alt="Candidato 2" onclick="votar('2')" class="img-fluid">
+                <p><strong>Partido:</strong> <span id="partido-2">Cargando...</span></p>
+                <p><strong>Votos:</strong> <span id="votos-2">0</span></p>
+            </div>
+            <div class="candidate-footer">
+                <button onclick="votar('2')" class="btn btn-primary w-100" disabled>Votar</button>
+            </div>
+            </div>
+        </div>
+
+      
+        <div class="col-md-3">
+            <div class="candidate-card h-100">
+            <div class="candidate-header" id="nombre-3">Cargando...</div>
+            <div class="candidate-body">
+                <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQtggkbdWXeDB0Zmm9_v85IBVwo9mzSydvwUA&s"
+                    alt="Candidato 3" onclick="votar('3')" class="img-fluid">
+                <p><strong>Partido:</strong> <span id="partido-3">Cargando...</span></p>
+                <p><strong>Votos:</strong> <span id="votos-3">0</span></p>
+            </div>
+            <div class="candidate-footer">
+                <button onclick="votar('3')" class="btn btn-primary w-100" disabled>Votar</button>
+            </div>
+            </div>
+        </div>
+
+
+        <div class="col-md-3">
+            <div class="candidate-card h-100">
+            <div class="candidate-header" id="nombre-blanco">Voto en Blanco</div>
+            <div class="candidate-body">
+                <img src="https://static.vecteezy.com/system/resources/previews/005/276/776/non_2x/logo-icon-person-on-white-background-free-vector.jpg"
+                    alt="Voto en Blanco" onclick="votar('blanco')" class="img-fluid">
+                <p><strong>Partido:</strong> <span id="partido-blanco">Blanco</span></p>
+                <p><strong>Votos:</strong> <span id="votos-blanco">0</span></p>
+            </div>
+            <div class="candidate-footer">
+                <button onclick="votar('blanco')" class="btn btn-primary w-100" disabled>Votar</button>
+            </div>
+            </div>
+        </div>
+        </div>
+    </main>
+
     <script src="java.js"></script>
-</body>
-</html>
+    </body>
+    </html>
