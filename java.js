@@ -31,7 +31,6 @@ function cargarCandidatos() {
     fetch(urlCandidatos)
         .then(res => res.json())
         .then(candidatos => {
-            // Agregar voto en blanco
             candidatos.push({ nombre: "Voto en Blanco", partido: "Blanco" });
             
             actualizarTarjetasCandidatos(candidatos);
@@ -105,7 +104,6 @@ function votar(idCandidato) {
 }
 
 function mostrarLogin() {
-    // Resetear modal
     document.getElementById("loginForm").style.display = "block";
     document.getElementById("adminActions").style.display = "none";
     document.getElementById("username").value = "";
@@ -271,3 +269,4 @@ function configurarEventosTeclado() {
     }
 
 }
+
